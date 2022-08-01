@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podchaosmonkey
+  namespace: test
+  labels:
+    app: podchaosmonkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podchaosmonkey
+  template:
+    metadata:
+      labels:
+        app: podchaosmonkey
+    spec:
+      serviceAccountName: podchaosmonkey
+      containers:
+      - name: podchaosmonkey
+        image: podchaosmonkey
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: podchaosmonkey
+  namespace: test
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: podchaosmonkey
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - pods
+      - pods/status
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: podchaosmonkey
+  namespace: test
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: podchaosmonkey
+subjects:
+- namespace: test
+  kind: ServiceAccount
+  name: podchaosmonkey
