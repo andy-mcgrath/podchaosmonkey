@@ -1,8 +1,6 @@
 package config
 
 import (
-	"io"
-	"os"
 	"time"
 
 	"github.com/spf13/viper"
@@ -12,7 +10,6 @@ type (
 	IConfig interface {
 		GetEnvironment() string
 		GetLogLevel() string
-		GetLogOutput() io.Writer
 		GetNamespace() string
 		GetPodFilter() string
 		GetConnectionTimeout() time.Duration
@@ -20,21 +17,19 @@ type (
 	}
 
 	Config struct {
-		Environment    string    `mapstructure:"ENVIRONMENT"`
-		Namespace      string    `mapstructure:"NAMESPACE"`
-		PodFilter      string    `mapstructure:"POD_FILTER"`
-		RequestTimeout int64     `mapstructure:"DEFAULT_TIMEOUT"`
-		KillTimeDelay  int64     `mapstructure:"KILL_TIME_DELAY"`
-		LogLevel       string    `mapstructure:"LOG_LEVEL"`
-		LogOutput      io.Writer `mapstructure:"LOG_OUTPUT"`
+		Environment    string `mapstructure:"ENVIRONMENT"`
+		Namespace      string `mapstructure:"NAMESPACE"`
+		PodFilter      string `mapstructure:"POD_FILTER"`
+		RequestTimeout int64  `mapstructure:"DEFAULT_TIMEOUT"`
+		KillTimeDelay  int64  `mapstructure:"KILL_TIME_DELAY"`
+		LogLevel       string `mapstructure:"LOG_LEVEL"`
 	}
 )
 
-func (c *Config) GetEnvironment() string  { return c.Environment }
-func (c *Config) GetLogLevel() string     { return c.LogLevel }
-func (c *Config) GetLogOutput() io.Writer { return c.LogOutput }
-func (c *Config) GetNamespace() string    { return c.Namespace }
-func (c *Config) GetPodFilter() string    { return c.PodFilter }
+func (c *Config) GetEnvironment() string { return c.Environment }
+func (c *Config) GetLogLevel() string    { return c.LogLevel }
+func (c *Config) GetNamespace() string   { return c.Namespace }
+func (c *Config) GetPodFilter() string   { return c.PodFilter }
 func (c *Config) GetKillTimeDelay() time.Duration {
 	return time.Duration(c.KillTimeDelay) * time.Second
 }
@@ -49,7 +44,6 @@ func Init() (*Config, error) {
 	viper.SetDefault("ENVIRONMENT", "DEV")
 	viper.SetDefault("KILL_TIME_DELAY", 120)
 	viper.SetDefault("LOG_LEVEL", "info")
-	viper.SetDefault("LOG_OUTPUT", os.Stdout)
 	viper.SetDefault("NAMESPACE", "chaos")
 	viper.SetDefault("POD_FILTER", ".*")
 	viper.SetDefault("DEFAULT_TIMEOUT", 5)
@@ -61,7 +55,7 @@ func Init() (*Config, error) {
 
 	// Select the correct configuration file `development.env` or `production.env`
 	if viper.GetString("ENVIRONMENT") == "DEV" {
-		viper.SetConfigName("development")
+		viper.SetConfigName("dev")
 	} else {
 		viper.SetConfigName("production")
 	}

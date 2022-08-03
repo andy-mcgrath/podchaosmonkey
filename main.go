@@ -28,5 +28,3 @@ func main() {
 	// Start main event loop
 	chaos.MurderLoop(ctx, cfg, client)
 }
-
-

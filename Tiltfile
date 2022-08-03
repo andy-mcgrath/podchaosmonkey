@@ -25,10 +25,10 @@ docker_build_with_restart(
   '.',
   entrypoint=['/app/chaos'],
   dockerfile='deployment/Dockerfile',
-  only=[
-    './chaos',
-    './production.env'
-  ],
+  # only=[
+  #   './chaos',
+  #   './production.env'
+  # ],
   live_update=[
     sync('./chaos', '/app/chaos'),
     sync('./production.env', '/app/production.env'),
@@ -41,7 +41,8 @@ k8s_resource(
   objects=[
     'podchaosmonkey:serviceaccount',
     'podchaosmonkey:clusterrole',
-    'podchaosmonkey:rolebinding',
+    'podchaosmonkey:clusterrolebinding',
+    'choasmonkey:namespace',
   ],
   resource_deps=['go-compile'],
 )
@@ -51,6 +52,6 @@ k8s_resource(
   'nginx',
   objects=[
     'nginx:serviceaccount',
-    'test:namespace',
+    'workloads:namespace',
   ],
 )

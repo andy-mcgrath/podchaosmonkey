@@ -16,7 +16,7 @@ import (
 )
 
 type (
-  mockConfig struct {}
+	mockConfig struct{}
 )
 
 func (c *mockConfig) GetEnvironment() string  { return "DEV" }
@@ -25,10 +25,10 @@ func (c *mockConfig) GetLogOutput() io.Writer { return os.Stdout }
 func (c *mockConfig) GetNamespace() string    { return "test" }
 func (c *mockConfig) GetPodFilter() string    { return ".*" }
 func (c *mockConfig) GetKillTimeDelay() time.Duration {
-return time.Duration(20) * time.Second
+	return time.Duration(20) * time.Second
 }
 func (c *mockConfig) GetConnectionTimeout() time.Duration {
-return time.Duration(5) * time.Second
+	return time.Duration(5) * time.Second
 }
 
 func creatPods(c kubernetes.Interface, numOfPods int) error {
@@ -53,7 +53,9 @@ func creatPods(c kubernetes.Interface, numOfPods int) error {
 			},
 		}
 		_, err := c.CoreV1().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -69,7 +71,6 @@ func TestGetPodList(t *testing.T) {
 	}
 	assert.Len(t, p.Items, 3, "Pod list should have 3 pods")
 }
-
 
 func TestFilterPodList(t *testing.T) {
 	c := testclient.NewSimpleClientset()

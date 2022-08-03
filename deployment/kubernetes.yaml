@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: podchaosmonkey
-  namespace: test
+  namespace: choasmonkey
   labels:
     app: podchaosmonkey
 spec:
@@ -16,42 +16,48 @@ spec:
         app: podchaosmonkey
     spec:
       serviceAccountName: podchaosmonkey
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
       containers:
       - name: podchaosmonkey
-        image: podchaosmonkey
+        image: podchaosmonkey # update to include registry and tag
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: podchaosmonkey
-  namespace: test
+  namespace: choasmonkey
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: podchaosmonkey
+  namespace: choasmonkey
 rules:
   - apiGroups:
       - ''
     resources:
       - pods
-      - pods/status
     verbs:
-      - get
       - list
-      - watch
       - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: podchaosmonkey
-  namespace: test
+  namespace: choasmonkey
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: podchaosmonkey
 subjects:
-- namespace: test
-  kind: ServiceAccount
+- kind: ServiceAccount
   name: podchaosmonkey
+  namespace: choasmonkey
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: choasmonkey

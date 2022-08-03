@@ -17,30 +17,30 @@ import (
 
 // MurderLoop - main pod murder loop
 func MurderLoop(ctx context.Context, cfg config.IConfig, client kubernetes.Interface) {
-  log.Println("PodChaosMonkey starting...")
-	go func(){
-    for {
-      time.Sleep(cfg.GetKillTimeDelay())
+	log.Println("PodChaosMonkey starting...")
+	go func() {
+		for {
+			log.Printf("...next pod murder in %d seconds...", cfg.GetKillTimeDelay()/1000000000)
+			time.Sleep(cfg.GetKillTimeDelay())
 
-      podlist, err := getPodList(ctx, cfg, client)
-      if err != nil {
-        log.Fatalf("Error getting pod list: %s", err)
-      }
+			podlist, err := getPodList(ctx, cfg, client)
+			if err != nil {
+				log.Fatalf("Error getting pod list: %s", err)
+			}
 
+			podlistFiltered, err := filterPodList(cfg, podlist)
+			if err != nil {
+				log.Fatalf("Error filtering pod list: %s", err)
+			}
 
-      podlistFiltered, err := filterPodList(cfg, podlist)
-      if err != nil {
-        log.Fatalf("Error filtering pod list: %s", err)
-      }
+			if err := murderPod(ctx, cfg, client, podlistFiltered); err != nil {
+				log.Fatalf("Error killing pod: %s", err)
+			}
+		}
+	}()
 
-      if err := murderPod(ctx, cfg, client, podlistFiltered); err != nil {
-        log.Fatalf("Error killing pod: %s", err)
-      }
-    }
-  }()
-
-  exitChannel := waitToExit()
-  <-exitChannel
+	exitChannel := waitToExit()
+	<-exitChannel
 }
 
 // Retruns a list of Kubernetes pods from a single namespace, set in configuration
@@ -63,7 +63,7 @@ func murderPod(ctx context.Context, cfg config.IConfig, client kubernetes.Interf
 	randPodIndex := rand.Intn(len(podlist.Items))
 	pod := &podlist.Items[randPodIndex]
 
-	log.Printf("!RedRuM pod '%s' pod MuRdeR!\n", pod.Name)
+	log.Printf("... !RedRuM pod '%s' pod MuRdeR!\n", pod.Name)
 	return client.CoreV1().Pods(cfg.GetNamespace()).Delete(ctxTimeout, pod.Name, metav1.DeleteOptions{})
 }
 
@@ -81,11 +81,11 @@ func filterPodList(cfg config.IConfig, podlist *v1.PodList) (*v1.PodList, error)
 		}
 	}
 
-  return &v1.PodList{
-    TypeMeta: podlist.TypeMeta,
-    ListMeta: podlist.ListMeta,
-    Items: filteredPods,
-  }, nil
+	return &v1.PodList{
+		TypeMeta: podlist.TypeMeta,
+		ListMeta: podlist.ListMeta,
+		Items:    filteredPods,
+	}, nil
 }
 
 // WaitToExit - Returns a blocking channel which unblocks and closes on an OS Interrupt signal

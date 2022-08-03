@@ -19,25 +19,25 @@ func TestConfigGetLogLevel(t *testing.T) {
 }
 
 func TestConfigGetNamespace(t *testing.T) {
-  c, _ := Init()
-  assert.Equal(t, "chaos", c.GetNamespace(), "GetNamespace to return `chaos`")
+	c, _ := Init()
+	assert.Equal(t, "chaos", c.GetNamespace(), "GetNamespace to return `chaos`")
 }
 
 func TestConfigGetPodFilter(t *testing.T) {
-  c, _ := Init()
-  _, err := regexp.Compile(c.GetPodFilter())
-  if err != nil {
-    t.Errorf("GetPodFilter to return a valid regexp") // handle error
-  }
-  assert.Equal(t, ".*", c.GetPodFilter(), "GetPodFilter to return `.*`")
+	c, _ := Init()
+	_, err := regexp.Compile(c.GetPodFilter())
+	if err != nil {
+		t.Errorf("GetPodFilter to return a valid regexp") // handle error
+	}
+	assert.Equal(t, ".*", c.GetPodFilter(), "GetPodFilter to return `.*`")
 }
 
 func TestConfigGetKillTimeDelay(t *testing.T) {
-  c, _ := Init()
-  assert.Equal(t, time.Duration(120)*time.Second, c.GetKillTimeDelay(), "GetKillTimeDelay to return `120 Seconds`")
+	c, _ := Init()
+	assert.Equal(t, time.Duration(120)*time.Second, c.GetKillTimeDelay(), "GetKillTimeDelay to return `120 Seconds`")
 }
 
 func TestConfGetConnectionTimeout(t *testing.T) {
-  c, _ := Init()
-  assert.Equal(t, time.Duration(5)*time.Second, c.GetConnectionTimeout(), "GetConnectionTimeout to return `5 Seconds`")
+	c, _ := Init()
+	assert.Equal(t, time.Duration(5)*time.Second, c.GetConnectionTimeout(), "GetConnectionTimeout to return `5 Seconds`")
 }
